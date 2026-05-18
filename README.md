@@ -1,14 +1,4 @@
-# Проектная работа "Веб-ларек"
-
-Стек: HTML, SCSS, TS, Vite
-
-Структура проекта:
-- src/ — исходные файлы проекта
-- src/components/ — папка с JS компонентами
-- src/components/base/ — папка с базовым кодом
-
-Важные файлы:
-- index.html — HTML-файл главной страницы
+ Проектная работа "Веб-ларек"Стек: HTML, SCSS, TS, ViteСтруктура проекта:- src/ — исходные файлы роекта- src/components/ — папка с JS компонентами- src/components/base/ — папка с базовым кодомВажные файлы:- index.html — HTML-файл главной страницы
 - src/types/index.ts — файл с типами
 - src/main.ts — точка входа приложения
 - src/scss/styles.scss — корневой файл стилей
@@ -97,4 +87,97 @@ Presenter - презентер содержит основную логику п
 `on<T extends object>(event: EventName, callback: (data: T) => void): void` - подписка на событие, принимает название события и функцию обработчик.  
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
+
+
+
+# Документация
+
+
+## Данные
+
+### Интерфейс товар
+interface Product {
+  id: string;
+  title: string;
+  image: string;
+  category: string;
+  price: number | null;
+  desciption: string;
+}
+
+### Интерфейс покупатель
+interface Buyer {
+ payment: 'card' | 'cash' | '';
+ address: string;
+ email: string;
+ phone: string;
+}
+
+
+## Модели данных
+
+### Класс ProductCatalog
+Контролирует хранение товаров, которые можно купить в приложении.
+
+Поля класса:
+`private products: Product[] = []` - массив всех товаров;
+`private selectProduct: Product | null = null` - товар, выбранный для подробного отображения.
+
+Методы класса:
+`saveProducts(productsArray: Product[]): void` - сохранение массива товаров полученного в параметрах метода;
+`getProducts(): Product[]` - получение массива товаров из модели;
+`getProductById(id: string): Product | undefined` - получение одного товара по его id;
+`setSelectedProduct(product: Product): void` - сохранение товара для подробного отображения;
+`getSelectedProduct(): Product | null` - получение товара для подробного отображения.
+
+
+### Класс Basket
+Обеспечивает хранение товаров, которые пользователь выбрал для покупки.
+
+Поля класса:
+`private items: Product[] = []` - массив товаров, выбранных покупателем для покупки.
+
+Методы класса:
+`getItems(): Product[]` - получение массива товаров, которые находятся в корзине;
+`addItem(product: Product): void` - добавление товара, который был получен в параметре, в массив корзины;
+`removeItem(product: Product): void` - удаление товара, полученного в параметре из массива корзины;
+`clearBasket(): void` - очистка корзины;
+`getTotalCost(): number` - получение стоимости всех товаров в корзине;
+`getItemCount(): number` - получение количества товаров в корзине;
+`hasItem(id: string): boolean` - проверка наличия товара в корзине по его id, полученного в параметр метода.
+
+
+### Класс Customer
+Обрабатывает данные покупателя, которые тот должен указать при оформлении заказа.
+
+Поля класса:
+`private payment: 'card' | 'cash' | '' = ''` - вид оплаты;
+`private address: string = ''` - адреc;
+`private phone: string = ''` - телефон;
+`private email: string = ''` - email.
+
+Методы класса:
+`savePayment(method: string): void` - сохранение данных вида оплаты;
+`saveAddress(address: string): void` - сохранение данных об адресе;
+`savePhone(phone: string): void` - сохранение данных о телефоне;
+`saveEmail(email: string): void` - сохранение данных о email;
+`getCustomerData()` - получение всех данных покупателя;
+`clearCustomerData(): void` - очистка данных покупателя;
+`validateData()` - валидация данных.
+
+
+## Слой коммуникации
+
+### Класс Server
+Обеспечивает взаимодейтвие приложения с другими приложениями и хранилищами.
+
+Конструктор:
+`constructor(api: IApi)` - В конструктор передается объект IApi.
+
+Поля класса:
+`api: IApi` - объект IApi. 
+
+Методы класса:
+`getProd(): Promise<ProdResponse>` - делает get запрос на эндпоинт /product/ и возвращает объект, полученный от сервера, в котором находится массив товаров;
+`postOrder(orderInfo: OrderInfo): Promise<any>` - делает post запрос на эндпоинт /order/ и передаёт в него данные, полученные в параметрах метода, а возвращает объект, подтверждающий покупку на определенную сумму.
 

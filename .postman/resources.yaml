@@ -1,0 +1,8 @@
+workspace:
+  id: b1fc2e1b-99df-4637-8f26-8d5704f0dd41
+localResources:
+  collections:
+    - ../postman/collections/WebLarek
+cloudResources:
+  collections:
+    ../postman/collections/WebLarek: 54780451-caf61c60-aaf7-4fa5-a2e5-bd9b2f8d7ae4
