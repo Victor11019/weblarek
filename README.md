@@ -97,20 +97,20 @@ Presenter - презентер содержит основную логику п
 
 ### Интерфейс товар
 interface Product {
-  id: string;
-  title: string;
-  image: string;
-  category: string;
-  price: number | null;
-  desciption: string;
+  id: string - идентификатор товара;
+  title: string - наименование товара;
+  image: string - ссылка на изображение товара;
+  category: string - категория товара;
+  price: number | null - стоимость товара;
+  desciption: string - описание товара.
 }
 
 ### Интерфейс покупатель
 interface Buyer {
- payment: 'card' | 'cash' | '';
- address: string;
- email: string;
- phone: string;
+ payment: 'card' | 'cash' | '' - способ оплаты;
+ address: string - адрес покупателя;
+ email: string - электронная почта покупателя;
+ phone: string - телефон покупателя.
 }
 
 

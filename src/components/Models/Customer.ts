@@ -1,3 +1,5 @@
+import { IBuyer, ValidationRes } from "../../types";
+
 class Customer {
 
   private payment: 'card' | 'cash' | '' = '';
@@ -10,7 +12,7 @@ class Customer {
   savePhone(phone: string): void { this.phone = phone; };
   saveEmail(email: string): void { this.email = email; };
   
-  getCustomerData(): {
+  IBuyer(): {
     payment: 'card' | 'cash' | '';
     address: string;
     phone: string;
@@ -31,15 +33,12 @@ class Customer {
     this.email = '';
   }
 
-   validateData(): {
-    isValid: boolean;
-    errors: { [key: string]: string };
-  } {
-    const errors: { [key: string]: string } = {
-      payment: !this.payment.trim() ? 'Вид оплаты не может быть пустым' : '',
-      address: !this.address.trim() ? 'Адрес не может быть пустым' : '',
-      phone: !this.phone.trim() ? 'Телефон не может быть пустым' : '',
-      email: !this.email.trim() ? 'Email не может быть пустым' : ''
+   validateData(): ValidationRes<IBuyer> {
+    const errors: Partial<Record<keyof IBuyer, string>> = {
+      payment: 'Вид оплаты не может быть пустым',
+      address: 'Адрес не может быть пустым',
+      phone: 'Телефон не может быть пустым',
+      email: 'Email не может быть пустым'
     };
 
     const isValid = Object.values(errors).every(error => error === '');

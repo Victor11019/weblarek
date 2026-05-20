@@ -4,12 +4,12 @@ class ProductCatalog {
     private products: Product[] = [];
     private selectProduct: Product | null = null;
 
-    saveProducts(products: Product[]): void {
-      this.products = products;
+    saveProducts(productsArray: Product[]): void {
+      this.products = [...productsArray];
   }
 
     getProducts(): Product[] {
-      return this.products; 
+      return [...this.products]; 
   }
 
     getProductById(id: string): Product | undefined {

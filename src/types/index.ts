@@ -14,37 +14,38 @@ export interface Product {
   description: string;
 };
 
-export interface Buyer {
+export interface IBuyer {
   payment: 'card' | 'cash' | '';
   address: string;
   email: string;
   phone: string;
 };
 
-export type Prod = {
-  id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number | null;
-};
+export type ValidationRes<T> = {
+  isValid: boolean;
+  errors: Partial<Record<keyof T, string>>;
+}
 
 export type ProdResponse = {
+  id: string;
   total: number;
-  items: Prod[];
-  products: Product[];
 };
 
 export type OrderInfo = {
-  customerData: {
     name: string;
     email: string;
     phone: string;
     payment: 'card' | 'cash' | '';
-  };
+  
   items: {
     prodId: string;
     quantity: number;
   }[];
+};
+
+export type OrderResponse = {
+  success: boolean;
+  message: string;
+  orderId?: string | number;
+  buyer: IBuyer;
 };
