@@ -4,8 +4,9 @@ import Customer from './components/Models/Customer';
 import ProductCatalog from './components/Models/ProductCatalog';
 import Server from './components/Models/Server';
 import './scss/styles.scss';
-import { OrderInfo } from './types';
 import { apiProducts } from './utils/data';
+import { API_URL } from './utils/constants';
+import { OrderInfo } from './types';
 
 const productsModel = new ProductCatalog();
 
@@ -16,10 +17,10 @@ productsModel.setSelectedProduct("HEX-леденец");
 console.log('Получение товара для подробного отображения', productsModel.getSelectedProduct());
 
 const basket = new Basket();
-basket.addItem({"id": "854cef69-976d-4c2a-a18c-2aa45046c390", "description": "Если планируете решать задачи в тренажёре, берите два.", "image": "/5_Dots.svg", "title": "+1 час в сутках", "category": "софт-скил", "price": 750});
-basket.addItem({"id": "c101ab44-ed99-4a54-990d-47aa2bb4e7d9", "description": "Лизните этот леденец, чтобы мгновенно запоминать и узнавать любой цветовой код CSS.", "image": "/Shell.svg", "title": "HEX-леденец", "category": "другое", "price": 1450});
+basket.addItem(apiProducts.items[0]);
+basket.addItem(apiProducts.items[1]);
 console.log('Добавление товара, который был получен в параметре, в массив корзины', basket.getItems());
-basket.removeItem({"id": "854cef69-976d-4c2a-a18c-2aa45046c390", "description": "Если планируете решать задачи в тренажёре, берите два.", "image": "/5_Dots.svg", "title": "+1 час в сутках", "category": "софт-скил", "price": 750});
+basket.removeItem(apiProducts.items[0]);
 console.log('Удаление товара, полученного в параметре из массива корзины', basket.getItems());
 basket.clearBasket();
 console.log('Очистка корзины', basket.getItems());
@@ -33,11 +34,11 @@ customer.saveAddress('ул. Полярная, 1');
 customer.savePhone('+7-908-124-556-8391');
 customer.saveEmail('dima@example.com');
 
-console.log('Получение всех данных покупателя', customer.IBuyer());
+console.log('Получение всех данных покупателя', customer.getData());
 console.log('Очистка данных покупателя', customer.clearCustomerData());
 console.log('Валидация данных', customer.validateData());
 
-const api = new Api('https://example.com/api');
+const api = new Api(API_URL);
 
 const server = new Server(api); 
 
@@ -56,6 +57,7 @@ const orderInfo: OrderInfo = {
     name: 'Дмитрий Владимиров',
     email: 'dima@example.com',
     phone: '+7-908-124-556-8391',
+    address: 'ул. Полярная, 1',
     payment: 'cash',
   
   items: [

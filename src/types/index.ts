@@ -1,5 +1,7 @@
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
+export type PaymentMethod = 'card' | 'cash' | '';
+
 export interface IApi {
     get<T extends object>(uri: string): Promise<T>;
     post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
@@ -15,7 +17,7 @@ export interface Product {
 };
 
 export interface IBuyer {
-  payment: 'card' | 'cash' | '';
+  payment: PaymentMethod;
   address: string;
   email: string;
   phone: string;
@@ -26,17 +28,15 @@ export type ValidationRes<T> = {
   errors: Partial<Record<keyof T, string>>;
 }
 
+export type ErrorValid = Partial<Record<keyof IBuyer, string>>;
+
 export type ProdResponse = {
   id: string;
   total: number;
 };
 
-export type OrderInfo = {
+export interface OrderInfo extends IBuyer {
     name: string;
-    email: string;
-    phone: string;
-    payment: 'card' | 'cash' | '';
-  
   items: {
     prodId: string;
     quantity: number;
@@ -44,8 +44,6 @@ export type OrderInfo = {
 };
 
 export type OrderResponse = {
-  success: boolean;
-  message: string;
-  orderId?: string | number;
-  buyer: IBuyer;
+  id: string;
+  total: number;
 };
