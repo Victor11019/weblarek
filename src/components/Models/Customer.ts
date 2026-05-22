@@ -32,7 +32,7 @@ class Customer {
   }
 
   validateData(): ValidationRes<IBuyer> {
-    const errors: ErrorValid = {};
+    const errors: ErrorValid<IBuyer> = {};
 
     if (this.payment === '') {
       errors.payment = 'Вид оплаты не может быть пустым';

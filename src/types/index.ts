@@ -23,24 +23,24 @@ export interface IBuyer {
   phone: string;
 };
 
+export type ErrorValid<T> = Partial<Record<keyof T, string>>; 
+
 export type ValidationRes<T> = {
   isValid: boolean;
-  errors: Partial<Record<keyof T, string>>;
-}
-
-export type ErrorValid = Partial<Record<keyof IBuyer, string>>;
+  errors: ErrorValid<T>;
+};
 
 export type ProdResponse = {
   id: string;
   total: number;
 };
 
+type prodId = string;
+
 export interface OrderInfo extends IBuyer {
-    name: string;
-  items: {
-    prodId: string;
-    quantity: number;
-  }[];
+  name: string;
+  total: number;
+  items: prodId[];
 };
 
 export type OrderResponse = {
