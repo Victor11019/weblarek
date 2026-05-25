@@ -38,7 +38,6 @@ export type ProdResponse = {
 type prodId = string;
 
 export interface OrderInfo extends IBuyer {
-  name: string;
   total: number;
   items: prodId[];
 };
