@@ -12,7 +12,7 @@ export interface Product {
   title: string;
   image: string;
   category: string;
-  price: number | null;
+  price: number | string | null;
   description: string;
 };
 
@@ -33,13 +33,16 @@ export type ValidationRes<T> = {
 export type ProdResponse = {
   id: string;
   total: number;
+  items: HTMLElement[];
+  products: Product[];
 };
 
-type prodId = string;
+export type prodId = string;
 
 export interface OrderInfo extends IBuyer {
-  total: number;
-  items: prodId[];
+  total?: number;
+  items: { prodId: string; quantity: number }[];
+  name: string;
 };
 
 export type OrderResponse = {

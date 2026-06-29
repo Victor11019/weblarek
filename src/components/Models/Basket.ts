@@ -1,4 +1,5 @@
 import { Product } from "../../types";
+import { ensureElement } from "../../utils/utils";
 
 class Basket {
   private items: Product[] = [];
@@ -30,6 +31,32 @@ class Basket {
   hasItem(id: string): boolean {
     return this.items.some(item => item.id === id);
   }
+
+  showPaymentStep() {
+    const orderEl = ensureElement<HTMLFormElement>('name="order"');
+    if(orderEl) {
+      orderEl.style.display = 'none';
+    }
+
+    const contactsEl = ensureElement<HTMLFormElement>('name="contacts"');
+    if(contactsEl) {
+      contactsEl.style.display = 'block';
+    }
+  }
+
+  processOrder() {
+        this.clearBasket();
+    
+        const orderData = {
+        items: this.getItems(),
+        total: this.getTotalCost(),
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('lastOrder', JSON.stringify(orderData));
+  
+      this.showPaymentStep();
+  }
+
 }
 
 export default Basket

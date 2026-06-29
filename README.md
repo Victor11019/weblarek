@@ -8,10 +8,6 @@
 ## Установка и запуск
 Для установки и запуска проекта необходимо выполнить команды
 
-```
-npm install
-npm run dev
-```
 
 или
 
@@ -114,7 +110,7 @@ interface Buyer {
 }
 
 
-## Модели данных
+## Слой моделей данных
 
 ### Класс ProductCatalog
 Контролирует хранение товаров, которые можно купить в приложении.
@@ -144,7 +140,7 @@ interface Buyer {
 `clearBasket(): void` - очистка корзины;
 `getTotalCost(): number` - получение стоимости всех товаров в корзине;
 `getItemCount(): number` - получение количества товаров в корзине;
-`hasItem(id: string): boolean` - проверка наличия товара в корзине по его id, полученного в параметр метода.
+`hasItem(id: string): boolean` - проверка наличия товара в корзине по его id, полученного в параметр метода. 
 
 
 ### Класс Customer
@@ -181,3 +177,185 @@ interface Buyer {
 `getProd(): Promise<ProdResponse>` - делает get запрос на эндпоинт /product/ и возвращает объект, полученный от сервера, в котором находится массив товаров;
 `postOrder(orderInfo: OrderInfo): Promise<any>` - делает post запрос на эндпоинт /order/ и передаёт в него данные, полученные в параметрах метода, а возвращает объект, подтверждающий покупку на определенную сумму.
 
+
+## Слой представления
+
+### Интерфейс заголовок
+interface IHeader {
+  counter: number - данные счетчика товаров.
+}
+
+### Класс Header extends Component<IHeaderData>
+Обеспечивает отображение шапки сайта.
+
+Поля класса:
+`basketButton: HTMLButtonElement` - кнопка счетчика товаров;
+`counterElement: HTMLElement` - счетчик товаров.
+
+Методы класса: 
+`set counter(value: number)` - установка счетчика товаров.
+
+
+### Интерфейс галерея
+interface IGallery {
+  catalog: HTMLElement[] - данные каталога товаров. 
+}
+
+### Класс Gallery extends Component<IGallery>
+Обеспечивает отображение каталога с карточками товаров.
+
+Поля класса:
+`catalogElement: HTMLElement` - каталог товаров.
+
+Методы класса: 
+`set catalog(items: HTMLElement[])` - установка каталога товаров.
+
+
+### Интерфейс модальное окно
+interface IModal {
+  content: HTMLElement - данные модального окна. 
+}
+
+### Класс Modal extends Component<Modal>
+Обеспечивает отображение модального окна.
+
+Поля класса:
+`closeButton: HTMLButtonElement` - кнопка закрытия модального окна;
+`contentElement: HTMLElement` - контент модального окна. 
+
+Методы класса: 
+`set content(item: HTMLElement)` - установка контента модального окна.
+
+
+### Интерфейс оформления
+interface ISucess {
+  description: string - данные карточки оформления. 
+}
+
+### Класс Sucess extends Component<ISucess>
+Обеспечивает функционирование карточки оформления.
+
+Поля класса:
+`descriptionElement: HTMLElement` - сумма списания оплаченной стоимости;
+`closeButton: HTMLButtonElement` - кнопка закрытия карточки оформления.
+ 
+Методы класса: 
+`set description(value: string)` -  определение суммы списания оплаченной стоимости.
+
+
+### Интерфейс карточки в каталоге
+interface ICardCatalog {
+  button: HTMLButtonElement - данные карточки в каталоге. 
+}
+
+### Класс Card-catalog extends Component<ICardCatalog>
+Обеспечивает отображение карточки в каталоге.
+
+Поля класса:
+`itemButton: HTMLButtonElement` - кнопка карточки в каталоге;
+ 
+Методы класса: 
+`set button(item: HTMLButtonElement)` - установка карточки в каталоге.
+
+
+### Интерфейс карточки предварительного просмотра
+interface ICardPreview {
+  card: HTMLButtonElement - данные карточки преварительного просмотра. 
+}
+
+### Класс Card-preview extends Component<ICardPreview>
+Обеспечивает функционирование карточки преварительного просмотра.
+
+Поля класса:
+`cardButton: HTMLButtonElement` - кнопка карточки в преварительного просмотра.
+ 
+Методы класса: 
+`set card(item: HTMLButtonElement)` - установка карточки преварительного просмотра.
+
+
+### Интерфейс карточки в корзине
+interface ICardBasket {
+  index: number - номер в списке товаров;
+}
+
+### Класс Card-basket extends Component<ICardBasket>
+Обеспечивает нахождение карточки в корзине.
+
+Поля класса:
+`basketIndexElement: HTMLElement` - номер карточки в списке товаров корзины;
+`deleteButton: HTMLButtonElement` - кнопка удалить карточку из списка в корзине.
+ 
+Методы класса: 
+`set index(value: number)` - определение номера карточки в списке корзины.
+
+
+### Интерфейс корзина
+interface IBasket {
+  list: HTMLElement[] - список товаров;
+  price: string - стоимость товаров.
+}
+
+### Класс Basket extends Component<IBasket>
+Образует корзину.
+
+Поля класса:
+`listElement: HTMLElement` - товар добавленный к покупке;
+`baskButton: HTMLButtonElement` - кнопка оформить покупку;
+`priceElement: HTMLElement` - стоимость добавленного товара для покупки.
+ 
+Методы класса:
+`set list(items: HTMLElement[])`- определение перечня товаров для покупки;
+`set price(value: string)` - определение стоимости всех товаров для покупки.
+
+
+### Интерфейс форма
+interface IForm {
+  forms: string - поля адрес, Email.
+}
+
+### Класс Form extends Component<IForm>
+Образует родительский класс для классов Order и Contacts.
+
+Поля класса:
+содержимое класса Form;
+результирующая кнопка.
+ 
+Методы класса: 
+установка родительской формы для классов Order и Contacts.
+
+
+### Интерфейс оплата
+interface IOrder {
+  address: string - данные об адресе доставки.
+}
+
+### Класс Order extends Form<IOrder>
+Образует дочерний класс для класса Form.
+
+Поля класса:
+`cardButton: HTMLButtonElement` - кнопка онлайн оплаты;
+`cashButton: HTMLButtonElement` - кнопка оплаты при получении;
+`addressInput: HTMLElement` - поле для ввода адреса доставки;
+`submitButton: HTMLButtonElement` - кнопка для перехода во вторую форму.
+
+Методы класса: 
+`set address(value: string)` - установка формы для ввода адреса.
+
+
+### Интерфейс контакты
+interface IContacts {
+  email: string - данные об электронной почте;
+  phone: number - данные о телефоне.
+}
+
+### Класс Contacts extends Form<IContacts>
+Образует дочерний класс для класса Form.
+
+Поля класса:
+`emailInput: HTMLElement` - поле для ввода электронной почты;
+`phoneInput: HTMLElement` - поле для ввода номера телефона;
+`submitButton: HTMLButtonElement` - кнопка для оплаты.
+
+Методы класса: 
+`set email(value: string)` - установка формы для электронной почте;
+`set phone(value: number)` - установка формы для номера телефона.

@@ -2,6 +2,7 @@ import { IBuyer } from "../../types";
 import { PaymentMethod } from "../../types";
 import { ValidationRes } from "../../types";
 import { ErrorValid } from "../../types";
+import { ensureAllElements, ensureElement } from "../../utils/utils";
 
 class Customer {
 
@@ -52,6 +53,23 @@ class Customer {
 
     const isValid = Object.keys(errors).length === 0;
     return { isValid, errors };
+  }
+
+  showValidationErrors() {
+    const errorEl = ensureAllElements<HTMLElement>('.form__errors');
+    errorEl.forEach(el => el.style.display = 'block');
+  }
+
+  showPaymentStep() {
+    const contactsEl = ensureElement<HTMLFormElement>('name="contacts"');
+    if(contactsEl) {
+      contactsEl.style.display = 'none';
+    }
+
+    const sucessEl = ensureElement<HTMLDivElement>('.order-success');
+    if(sucessEl) {
+      sucessEl.style.display = 'block';
+    }
   }
 }
 
