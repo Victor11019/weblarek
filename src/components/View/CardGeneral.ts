@@ -1,27 +1,31 @@
-import { Product } from "../../types";
-import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component";
- 
+import { ICardGeneral } from "../../types";
+import { ensureElement } from "../../utils/utils";import { Component } from "../base/Component";
 
-export class CardGeneral extends Component<Product> {
-   protected titleCardElement: HTMLElement; 
-   protected priceCardElement: HTMLElement;
+export class CardGeneral extends Component<ICardGeneral> {
+    protected titleElement: HTMLElement;
+    protected priceElement: HTMLElement;
+    protected ID: string = '';
+    
+    constructor(container: HTMLElement) {
+        super(container)
 
-   constructor(container: HTMLElement) {
-    super(container);
-     
-    this.titleCardElement = ensureElement<HTMLElement>('.card__title', this.container);
-    this.priceCardElement = ensureElement<HTMLElement>('.card__price', this.container);
-
-   }
+        this.titleElement = ensureElement<HTMLElement>('.card__title', this.container);
+        this.priceElement = ensureElement<HTMLElement>('.card__price', this.container);
+    }
 
     set title(value: string) {
-        this.titleCardElement.textContent = value;
-    }   
+        this.titleElement.textContent = value
+    }
     
-    set price(value: string) {
-        this.priceCardElement.textContent = value ? `${value} синапсов` : 'Бесценно';
-        
-    }   
+    set cost(value: number | null) {
+        if (value) {
+            this.priceElement.textContent = `${value} синапсов`
+            return
+        }
+        this.priceElement.textContent = `Бесценно`
+    }
 
+    set id(value: string) {
+        this.ID = value
+    }
 }

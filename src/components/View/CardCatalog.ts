@@ -1,38 +1,38 @@
-import { Product } from "../../types";
-import { categoryMap } from "../../utils/constants";
+import { ICardCatalog} from "../../types";
+import { categoryMap, CDN_URL } from "../../utils/constants";
 import { ensureElement } from "../../utils/utils";
+import { IEvents } from "../base/Events";
 import { CardGeneral } from "./CardGeneral";
 
 type CategoryKey = keyof typeof categoryMap;
-export type TCardCatalog = Pick<Product, 'category' | 'image'>;
   
-export class CardCatalog extends CardGeneral {
+export class CardCatalog extends CardGeneral implements ICardCatalog {
+    protected imageElement: HTMLImageElement;
     protected categoryElement: HTMLElement;
-    protected imageElement: HTMLImageElement; 
 
-    constructor(container: HTMLElement, actions?: {onClick: (event: MouseEvent) => void}) {
+    constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
-
-        this.categoryElement = ensureElement<HTMLElement>('.card__category', this.container);
+        
         this.imageElement = ensureElement<HTMLImageElement>('.card__image', this.container);
+        this.categoryElement = ensureElement<HTMLElement>('.card__category', this.container);
 
-        if(actions?.onClick) {
-            this.container.addEventListener('click', actions.onClick);
-        }
-    }
-
-    set category(value: string) {
-        this.categoryElement.textContent = value;
-
-        for(const key in categoryMap) {
-           this.categoryElement.classList.toggle(
-              categoryMap[key as CategoryKey],
-              key === value
-           ); 
-        }
+        this.container.addEventListener('click', () => {
+            this.events.emit('cardCatalog:selected', { id: this.id })
+        })
     }
 
     set image(value: string) {
-        this.setImage(this.imageElement, value, this.title);
+        this.setImage(this.imageElement, CDN_URL + value, this.imageAdd)
+    }
+
+    set imageAdd(value: string) {
+        this.imageElement.alt = value
+    }
+
+    set category(value: CategoryKey) {
+        const className = categoryMap[value]
+        if(!className) { return }
+        this.categoryElement.classList.add(className)
+        this.categoryElement.textContent = value
     }
 }

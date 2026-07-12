@@ -1,30 +1,24 @@
+import { ICardBasket } from "../../types";
 import { ensureElement } from "../../utils/utils";
+import { IEvents } from "../base/Events";
 import { CardGeneral } from "./CardGeneral";
 
-export interface ICardBasket {
-    index: number;
-    delete: HTMLButtonElement;
-}
-
-export class CardBasket extends CardGeneral {
+export class CardBasket extends CardGeneral implements ICardBasket {
     protected indexElement: HTMLElement;
     protected deleteButton: HTMLButtonElement;
 
-    constructor(container: HTMLElement, actions?: {onClick: (event: MouseEvent) => void}) {
+    constructor(container: HTMLElement, protected events: IEvents) {
         super(container)
 
         this.indexElement = ensureElement<HTMLElement>('.basket__item-index', this.container);
         this.deleteButton = ensureElement<HTMLButtonElement>('.basket__item-delete', this.container);
 
-        if(actions?.onClick) {
-             this.deleteButton.addEventListener('click', actions.onClick);
-    }
-}
-    set index(value: number) {
-        this.indexElement.textContent = String(value);
+        this.deleteButton.addEventListener('click', () => {
+            this.events.emit('basket:delete', { id: this.id })
+        })
     }
 
-    set delete(item: HTMLButtonElement) {
-        this.deleteButton.textContent = String(item);
+    set index(value: number) {
+        this.indexElement.textContent = String(value);
     }
 }

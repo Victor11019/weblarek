@@ -1,51 +1,108 @@
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
-export type PaymentMethod = 'card' | 'cash' | '';
+export type TPayment = 'card' | 'cash' | '';
 
 export interface IApi {
     get<T extends object>(uri: string): Promise<T>;
     post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 };
 
-export interface Product {
+export interface IProduct  {
   id: string;
   title: string;
   image: string;
   category: string;
-  price: number | string | null;
+  price: number | null;
   description: string;
 };
+ 
+export interface IModal {
+	content: HTMLElement;
+}
 
-export interface IBuyer {
-  payment: PaymentMethod;
-  address: string;
+export interface IGallery {
+    catalog: HTMLElement[];
+}
+
+export interface IHeader {
+    counter: number;
+}
+
+export interface IBasket {
+	list: HTMLElement[];
+    total: number;
+    button: boolean;
+}
+
+export interface ICardBasket extends ICardGeneral {
+    index: number;
+}
+
+export interface ICardCatalog extends ICardGeneral {
+    category: string;
+    image: string;
+    imageAdd?: string;
+}
+
+export interface ICardPreview extends ICardGeneral {
+    category: string;
+    image: string;
+    imageAdd?: string;
+    description: string;
+}
+
+export interface ICardGeneral {
+    id: string;
+    title: string;
+    cost: number | null;
+    index?: number;
+}
+
+export interface IForm {
+	error: string;
+    email?: string;
+    phone?: number | string;
+    paymentMethod?: TPayment;
+    address?: string;
+}
+
+export interface IOrder extends IForm {
+	address: string
+}
+
+export interface IContacts extends IForm  {
+	phone: string;
+	email: string;
+}
+
+export interface ISuccess {
+    total: number;
+}
+
+export type TOrderResponse = TOrderSuccess | TOrderError;
+
+export interface TOrderData extends ICustomer{
+    total: number; 
+    items: string[]; 
+}
+
+export type TProductListResponse = {
+    total: number;
+    items: IProduct[];
+}
+
+export type TOrderSuccess = {
+    id: string;
+    total: number;
+}
+
+export type TOrderError = {
+    error: string;
+}
+
+export interface ICustomer {
+  payment: TPayment;
   email: string;
   phone: string;
-};
-
-export type ErrorValid<T> = Partial<Record<keyof T, string>>; 
-
-export type ValidationRes<T> = {
-  isValid: boolean;
-  errors: ErrorValid<T>;
-};
-
-export type ProdResponse = {
-  id: string;
-  total: number;
-  items: HTMLElement[];
-  products: Product[];
-};
-
-export type prodId = string;
-
-export interface OrderInfo extends IBuyer {
-  total?: number;
-  items: { prodId: string; quantity: number }[];
-  name: string;
-};
-
-export type OrderResponse = {
-  id: string;
-  total: number;
-};
+  address: string;
+}

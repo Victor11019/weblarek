@@ -1,10 +1,7 @@
+import { IGallery } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events"; 
-
-export interface IGallery {
-    catalog: HTMLElement[];
-}
 
 export class Gallery extends Component<IGallery> {
     protected catalogElement: HTMLElement;
@@ -12,11 +9,13 @@ export class Gallery extends Component<IGallery> {
     constructor(protected events: IEvents, container: HTMLElement) {
       super(container);
 
-      this.catalogElement = ensureElement<HTMLElement>('.gallery', this.container);
+      this.catalogElement = ensureElement<HTMLElement>('.gallery', this.container)
     }
 
     set catalog(items: HTMLElement[]) {
-        this.catalogElement.replaceChildren(...items);
-        this.events.emit('gallery:changed');
-      };
+        this.catalogElement.innerHTML = ''
+        items.forEach(item => {
+            this.catalogElement.appendChild(item)
+        })
     }
+}

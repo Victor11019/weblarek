@@ -1,38 +1,38 @@
+import { IBasket } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
+import { EventEmitter } from "../base/Events";
 
-export interface IBasket {
-    list: HTMLElement;
-    button: string;
-    price: string;
-}
+export class Basket extends Component<IBasket> {
+    protected listElement: HTMLUListElement;
+    protected buttonElement: HTMLButtonElement;
+    protected totalElement: HTMLElement;
 
-export class BasKet extends Component<IBasket> {
-    protected listElement: HTMLElement;
-    protected basketButton: HTMLButtonElement;
-    protected priceElement: HTMLElement;
-    
-    constructor(container: HTMLElement, actions?: {onClick: (event: MouseEvent) => void}) {
+    constructor(container: HTMLElement, protected events: EventEmitter) {
         super(container);
 
-        this.listElement = ensureElement<HTMLElement>('.basket__list', this.container);
-        this.basketButton = ensureElement<HTMLButtonElement>('.basket__button', this.container);
-        this.priceElement = ensureElement<HTMLElement>('.basket__price', this.container);
+        this.listElement = ensureElement<HTMLUListElement>('.basket__list', this.container);
+        this.buttonElement = ensureElement<HTMLButtonElement>('.basket__button', this.container);
+        this.totalElement = ensureElement<HTMLElement>('.basket__price', this.container);
         
-        if(actions?.onClick) {
-            this.basketButton.addEventListener('click', actions.onClick)
-        }
+
+        this.buttonElement.addEventListener('click', () => {
+            this.events.emit('basket:makeOrder')
+        })
+    } 
+
+    set total(value: number) {
+        this.totalElement.textContent = `${value} синапсов`
     }
 
-    set list(item: HTMLElement) {
-        this.listElement.textContent = String(item);
+    set list(items: HTMLElement[]) {
+        this.listElement.innerHTML = ''
+        items.forEach(item => {
+            this.listElement.appendChild(item)
+        })
     }
 
-    set button(value: string) {
-        this.basketButton.textContent = value;
-    }
-
-    set price(value: string) {
-        this.priceElement.textContent = value;
+    set button(state: boolean) {
+        this.buttonElement.disabled = state
     }
 }

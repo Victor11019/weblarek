@@ -1,19 +1,7 @@
-import { IHeader } from "../View/Header";
-import { IGallery } from "../View/Gallery";
-import { IModal } from "../View/Modal";
-import { ISucess } from "../View/Sucess";
-import { IBasket } from "../View/BasKet";
-import { IForm } from "../View/Form";
-import { IOrder } from "../View/Order";
-import { IContacts } from "../View/Contacts";
-import { ICardBasket } from "../View/CardBasket";
-import { TCardCatalog } from "../View/CardCatalog";
-import { Product } from "../../types";
-
 /**
  * Базовый компонент
  */
-export abstract class Component<T extends IHeader | IGallery | IModal | ISucess | IBasket | IForm | IOrder | IContacts | ICardBasket | TCardCatalog | Product> {
+export abstract class Component<T> {
     protected constructor(protected readonly container: HTMLElement) {
         // Учитывайте что код в конструкторе исполняется ДО всех объявлений в дочернем классе
     }

@@ -1,43 +1,27 @@
+import { IForm } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
-
-export interface IForm {
-   title: string; 
-   card: string;
-   cash: string;
-}
+import { IEvents } from "../base/Events";
 
 export class Form extends Component<IForm> { 
-    protected paymentAddressEmailPhoneElement: HTMLElement;
-    protected cardButton: HTMLButtonElement;
-    protected cashButton: HTMLButtonElement;
+    protected errElement: HTMLElement;
+    protected subButton: HTMLButtonElement;
+    protected formElement: HTMLFormElement;
      
-    constructor(public container: HTMLElement, actions?: {onClick: (event: MouseEvent) => void}) {
+    constructor(protected events: IEvents, protected container: HTMLFormElement) {
         super(container);
         
-        this.paymentAddressEmailPhoneElement = ensureElement<HTMLElement>('.modal__title', this.container);
-        this.cardButton = ensureElement<HTMLButtonElement>('name="card"', this.container);
-        this.cashButton = ensureElement<HTMLButtonElement>('name="cash"', this.container);
-
-        if (actions?.onClick) {
-           this.cardButton.addEventListener('click', actions.onClick);
-        }
-
-        if (actions?.onClick) {
-           this.cashButton.addEventListener('click', actions.onClick);
-        }
+        this.errElement = ensureElement<HTMLElement>('.form__errors', this.container)
+        this.subButton = ensureElement<HTMLButtonElement>('button[type="submit"]', this.container)
+        this.formElement = container
     }
-
-    set title(value: string) {
-        this.paymentAddressEmailPhoneElement.textContent = value;
+    
+    showError(errors: string[]): void {
+        this.error = errors.join(', ')
+        this.subButton.disabled = errors.length !== 0
     }
-
-    set card(value: string) {
-        this.cardButton.textContent = value;
+   
+    set error(value: string) {
+        this.errElement.textContent = value
     }
-
-    set cash(value: string) {
-        this.cashButton.textContent = value;
-    }
-
 }

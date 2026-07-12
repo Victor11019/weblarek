@@ -1,22 +1,16 @@
-import { IBuyer } from "../../types";
-import { PaymentMethod } from "../../types";
-import { ValidationRes } from "../../types";
-import { ErrorValid } from "../../types";
-import { ensureAllElements, ensureElement } from "../../utils/utils";
+import { ICustomer, TPayment} from "../../types";
+import { IEvents } from "../base/Events";
 
 class Customer {
 
-  private payment: PaymentMethod = '';
+  private payment: TPayment = '';
   private address: string = '';
   private phone: string = '';
   private email: string = '';
 
-  savePayment(method: PaymentMethod): void { this.payment = method; };
-  saveAddress(address: string): void { this.address = address; };
-  savePhone(phone: string): void { this.phone = phone; };
-  saveEmail(email: string): void { this.email = email; };
-  
-  getData(): IBuyer {
+  constructor (protected events: IEvents) {}
+
+  getCustomerData(): ICustomer {
     return {
    payment: this.payment,
    address: this.address,
@@ -30,10 +24,31 @@ class Customer {
     this.address = '';
     this.phone = '';
     this.email = '';
+    this.events.emit('order:updated')
   }
 
-  validateData(): ValidationRes<IBuyer> {
-    const errors: ErrorValid<IBuyer> = {};
+  updateCustomer(data: Partial<ICustomer>): void {
+        if (data.payment !== undefined) {
+            this.payment = data.payment
+        }
+
+        if (data.email !== undefined) {
+            this.email = data.email
+        }
+
+        if (data.phone !== undefined) {
+            this.phone = data.phone
+        }
+
+        if (data.address !== undefined) {
+            this.address = data.address
+        }
+
+        this.events.emit('order:updated')
+    }
+
+  validate(): Partial<Record<keyof ICustomer, string>> {
+        const errors: Partial<Record<keyof ICustomer, string>> = {}
 
     if (this.payment === '') {
       errors.payment = 'Вид оплаты не может быть пустым';
@@ -51,25 +66,7 @@ class Customer {
       errors.email = 'Email не может быть пустым';
     }
 
-    const isValid = Object.keys(errors).length === 0;
-    return { isValid, errors };
-  }
-
-  showValidationErrors() {
-    const errorEl = ensureAllElements<HTMLElement>('.form__errors');
-    errorEl.forEach(el => el.style.display = 'block');
-  }
-
-  showPaymentStep() {
-    const contactsEl = ensureElement<HTMLFormElement>('name="contacts"');
-    if(contactsEl) {
-      contactsEl.style.display = 'none';
-    }
-
-    const sucessEl = ensureElement<HTMLDivElement>('.order-success');
-    if(sucessEl) {
-      sucessEl.style.display = 'block';
-    }
+    return errors
   }
 }
 
