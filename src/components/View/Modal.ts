@@ -15,26 +15,33 @@ export class Modal extends Component<IModal> {
         this.modalContent = ensureElement<HTMLElement>('.modal__content', this.container)
 
 		this.closeButton.addEventListener('click', () => {
-            this.events.emit('modal:close')
-        })
+            this.close();
+        });
 
 		this.container.addEventListener('click', (event) => {
             if (event.target === container) {
-                this.events.emit('modal:close')
+                this.close();
             }
-        })
+        });
+
+        this.events.on('success-modal:close', () => {
+            this.close();
+        });
     }
 
 	open() {
         if (this.openFlag) { return }
-        this.container.classList.add('modal_active')
-        this.openFlag = true
+        this.container.classList.add('modal_active');
+        this.openFlag = true;
+        this.events.emit('modal:open');
     }
 
 	close() {
         if (!this.openFlag) { return }
-        this.container.classList.remove('modal_active')
-        this.openFlag = false
+        this.container.classList.remove('modal_active');
+        this.openFlag = false;
+        this.modalContent.innerHTML = '';
+        this.events.emit('modal:close');
     }
 
 	isOpen(): boolean {
@@ -45,5 +52,4 @@ export class Modal extends Component<IModal> {
         this.modalContent.innerHTML = ''
         this.modalContent.appendChild(content)
     }
-
 }

@@ -51,11 +51,13 @@ const basket = new Basket(cloneTemplate(basketTemplate), events);
 const success = new Success(events, successContainer);
 const order = new Order(orderContainer, events);
 const contacts = new Contacts(contactsContainer, events);
-const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), events);
+const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), () => {
+    events.emit('cardPreviewButton:click');
+});
 
 function initialization() {
     
-// При изменении данных покупателя отображаем мохраненные данные в формах и передаем в формы имеющиеся ошибки
+// При изменении данных покупателя отображаем сохраненные данные в формах и передаем в формы имеющиеся ошибки
 events.on('order:updated', () => {
     const customer = customerModel.getCustomerData()
     const errors = customerModel.validate()
@@ -83,7 +85,7 @@ events.on('basket:change', () => {
     basket.render({
         list: getBasketList(),
         total: basketModel.getTotalCost(),
-        button: basketModel.getItemCount() === 0
+        buttonState: basketModel.getItemCount() === 0
     })
 
     header.counter = basketModel.getItemCount()
@@ -91,19 +93,18 @@ events.on('basket:change', () => {
 
 // Удаление товара из списка корзины в окне с корзиной
 events.on<{ id: string }>('basket:delete', ({ id }) => {
-    const product = productCatalog.getProductById(id)
-
-    if(!product) { return }
-    
-    if(basketModel.hasItem(id)) {
-        basketModel.removeItem(product)
-    }
+     const product = productCatalog.getProductById(id);
+     if (product && basketModel.hasItem(id)) {
+        basketModel.removeItem(product);
+     }
 })
 
 // Отрисовка каталога товаров
 events.on('productCatalog:products', () => {
     const items = productCatalog.getProducts().map((item) => {
-        const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), events)
+        const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), () => {
+            events.emit('cardCatalog:selected', { id: item.id });
+        })
         return card.render(item)
     })       
     galerry.render({ catalog: items })
@@ -113,7 +114,7 @@ events.on('productCatalog:products', () => {
 events.on<{ id: string }>('cardCatalog:selected', ({ id }) => {
     const selectedCard = productCatalog.getProductById(id)
     if (selectedCard) {
-        productCatalog.saveProducts([selectedCard])
+        productCatalog.setSelectedProduct(selectedCard)
     }
 })
 
@@ -127,30 +128,27 @@ events.on<{ id: string }>('cardCatalog:openCard', ({ id }) => {
 })
 
 // клик по кнопке добавления/удаления в корзину
-events.on<{ id: string }>('cardPreviewButton:click', ({ id }) => {
-    const product = productCatalog.getProductById(id)
-    const hasCart = basketModel.hasItem(id)
-            
-    if (!product) { return }
+events.on('cardPreviewButton:click', () => {
+    const product = productCatalog.getSelectedProduct();
+    if (!product) return;
+
+    const hasCart = basketModel.hasItem(product.id);
 
     if (hasCart) {
         basketModel.removeItem(product)
     } else {
         basketModel.addItem(product)
     }
-})
 
-// Изменение отображения кнопки в карточке
-events.on<{ id: string }>('cardPreviewButton:change', ({ id }) => {
-    const hasCart = basketModel.hasItem(id)
-
-    cardPreview.buttonChange = hasCart
+    cardPreview.buttonChange = !hasCart;
 })
 
 // Функция для получения массива с карточками товаров
 const getBasketList = (): HTMLElement[] => {
     const basketLists = basketModel.getItems().map((list, index) => {
-        const card = new CardBasket(cloneTemplate(cardBasketTemplate), events)
+        const card = new CardBasket(cloneTemplate(cardBasketTemplate), () => {
+            events.emit('basket:delete');
+        })
         return card.render({...list, index: index + 1})
     })
 
@@ -159,7 +157,7 @@ const getBasketList = (): HTMLElement[] => {
 
 // Открытие корзины
 events.on('basket:open', () => {
-    basket.button = basketModel.getItemCount() === 0
+    basket.buttonState = basketModel.getItemCount() === 0
     modal.open()
     modal.render({ 
         content: basket.render()})
@@ -167,15 +165,10 @@ events.on('basket:open', () => {
 
 // Переход на страницу создания заказа
 events.on('basket:makeOrder', () => {
-    const customer =  customerModel.getCustomerData()
-    customerModel.updateCustomer(customer)
-
     modal.render({ 
-        content: order.render({
-        paymentMethod: customer.payment,
-        address: customer.address,})
-    })
-})
+        content: order.render()
+    });
+});
 
 // Изменение данных о покупателе
 events.on<Partial<ICustomer>>('customer:change', ( data) => {
@@ -184,18 +177,13 @@ events.on<Partial<ICustomer>>('customer:change', ( data) => {
 
 // Заполнение формы адреса и выбора оплаты
 events.on('order:submit', () => {
-    const customer = customerModel.getCustomerData()
-
     modal.render({ 
-        content: contacts.render({
-            email: customer.email,
-            phone: customer.phone,})
-    })
-})
+        content: contacts.render()
+    });
+});
 
 // Проверяем правильность данных, обновляем данные пользователя, отправляем заказ, если он успешный - выводим сообщение.
-events.on<{ email: string; phone: string;}>('contacts:submit', async () => {
-            
+events.on<{ email: string; phone: string;}>('contacts:submit', async () => {       
     try {
             const itemsId = basketModel.getItems().map((item) => item.id)
             const order = await server.createOrder({
@@ -204,7 +192,6 @@ events.on<{ email: string; phone: string;}>('contacts:submit', async () => {
                 items: itemsId,
             })
 
-            if ('id' in order) {
                 modal.render({ 
                     content: success.render({
                         total: order.total
@@ -213,9 +200,6 @@ events.on<{ email: string; phone: string;}>('contacts:submit', async () => {
 
                 customerModel.clearCustomerData()
                 basketModel.clearBasket()
-
-            }
-
         } catch (err) {
             console.error('Ошибка при создании заказа:', err)
         }
@@ -223,11 +207,16 @@ events.on<{ email: string; phone: string;}>('contacts:submit', async () => {
 )
 
 // Закрытие модального окна
-    events.on('modal:close', () => {
-        modal.close()
+ events.on('modal:close', () => {
+    modal.close();
 })
 
- // Запрос за товарами
+// Закрытие формы об успешной оплате
+events.on('success-modal:close', () => {         
+    console.log('Success modal is closing');
+})
+
+// Запрос за товарами
 server
     .getProductList()
     .then((data) => {productCatalog.saveProducts(data)})

@@ -6,6 +6,7 @@ import { IEvents } from "../base/Events";
 export class Success extends Component<ISuccess> {
    protected closeButton: HTMLButtonElement;
    protected totalElement: HTMLElement;
+   protected openFlag: boolean = false;
 
     constructor(protected events: IEvents, container: HTMLElement) {
         super(container);
@@ -14,11 +15,15 @@ export class Success extends Component<ISuccess> {
         this.totalElement = ensureElement<HTMLElement>('.order-success__description', this.container);
 
         this.closeButton.addEventListener('click', () => {
-            this.events.emit('modal:close')
+            this.events.emit('success-modal:close')
         })
     }
     
     set total(value: number) {
 		this.totalElement.textContent = `Списано ${value} синапсов`;
 	}
+
+    close() {
+        this.events.emit('success-modal:close');
+    }
 }

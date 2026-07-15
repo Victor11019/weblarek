@@ -1,7 +1,6 @@
 import { ICardCatalog} from "../../types";
 import { categoryMap, CDN_URL } from "../../utils/constants";
 import { ensureElement } from "../../utils/utils";
-import { IEvents } from "../base/Events";
 import { CardGeneral } from "./CardGeneral";
 
 type CategoryKey = keyof typeof categoryMap;
@@ -9,15 +8,18 @@ type CategoryKey = keyof typeof categoryMap;
 export class CardCatalog extends CardGeneral implements ICardCatalog {
     protected imageElement: HTMLImageElement;
     protected categoryElement: HTMLElement;
+    protected selectOnAction: () => void;
 
-    constructor(container: HTMLElement, protected events: IEvents) {
+    constructor(container: HTMLElement, onAction: () => void) {
         super(container);
         
         this.imageElement = ensureElement<HTMLImageElement>('.card__image', this.container);
         this.categoryElement = ensureElement<HTMLElement>('.card__category', this.container);
 
-        this.container.addEventListener('click', () => {
-            this.events.emit('cardCatalog:selected', { id: this.id })
+        this.selectOnAction = onAction;
+    
+         this.container.addEventListener('click', () => {
+         this.selectOnAction();
         })
     }
 

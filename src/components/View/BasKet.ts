@@ -32,7 +32,7 @@ export class Basket extends Component<IBasket> {
         })
     }
 
-    set button(state: boolean) {
+    set buttonState(state: boolean) {
         this.buttonElement.disabled = state
     }
 }

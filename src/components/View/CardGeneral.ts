@@ -4,7 +4,6 @@ import { ensureElement } from "../../utils/utils";import { Component } from "../
 export class CardGeneral extends Component<ICardGeneral> {
     protected titleElement: HTMLElement;
     protected priceElement: HTMLElement;
-    protected ID: string = '';
     
     constructor(container: HTMLElement) {
         super(container)
@@ -14,18 +13,10 @@ export class CardGeneral extends Component<ICardGeneral> {
     }
 
     set title(value: string) {
-        this.titleElement.textContent = value
+        this.titleElement.textContent = value;
     }
     
     set cost(value: number | null) {
-        if (value) {
-            this.priceElement.textContent = `${value} синапсов`
-            return
-        }
-        this.priceElement.textContent = `Бесценно`
-    }
-
-    set id(value: string) {
-        this.ID = value
+        this.priceElement.textContent = value ? `${value} синапсов` : 'Бесценно';
     }
 }

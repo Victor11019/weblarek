@@ -31,7 +31,7 @@ export interface IHeader {
 export interface IBasket {
 	list: HTMLElement[];
     total: number;
-    button: boolean;
+    buttonState: boolean;
 }
 
 export interface ICardBasket extends ICardGeneral {
@@ -52,7 +52,6 @@ export interface ICardPreview extends ICardGeneral {
 }
 
 export interface ICardGeneral {
-    id: string;
     title: string;
     cost: number | null;
     index?: number;
@@ -98,6 +97,7 @@ export type TOrderSuccess = {
 
 export type TOrderError = {
     error: string;
+    total: number;
 }
 
 export interface ICustomer {
@@ -106,3 +106,4 @@ export interface ICustomer {
   phone: string;
   address: string;
 }
+
