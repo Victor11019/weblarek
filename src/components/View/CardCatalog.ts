@@ -3,7 +3,7 @@ import { categoryMap, CDN_URL } from "../../utils/constants";
 import { ensureElement } from "../../utils/utils";
 import { CardGeneral } from "./CardGeneral";
 
-type CategoryKey = keyof typeof categoryMap;
+export type CategoryKey = keyof typeof categoryMap;
   
 export class CardCatalog extends CardGeneral implements ICardCatalog {
     protected imageElement: HTMLImageElement;

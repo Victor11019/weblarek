@@ -1,7 +1,9 @@
 import { ICardPreview } from "../../types";
-import { CDN_URL } from "../../utils/constants";
+import { categoryMap, CDN_URL } from "../../utils/constants";
 import { ensureElement } from "../../utils/utils";
 import { CardGeneral } from "./CardGeneral";
+
+type CategoryKey = keyof typeof categoryMap;
 
 export class CardPreview extends CardGeneral implements ICardPreview {
   protected imageElement: HTMLImageElement; 
@@ -33,7 +35,10 @@ constructor(container: HTMLElement, onAction: () => void) {
     this.imageElement.alt = value
   }
   
-  set category(value: string) {
+  set category(value: CategoryKey) {
+    const nameClass = categoryMap[value]
+    if(!nameClass) {return}
+    this.categoryElement.classList.add(nameClass)
     this.categoryElement.textContent = value
   }
 

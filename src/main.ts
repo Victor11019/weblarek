@@ -17,7 +17,7 @@ import { Api } from './components/base/Api';
 import { Header } from './components/View/Header';
 import { Gallery } from './components/View/Gallery';
 import { CardPreview } from './components/View/CardPreview';
-import { CardCatalog } from './components/View/CardCatalog';
+import { CardCatalog, CategoryKey } from './components/View/CardCatalog';
 import { CardBasket } from './components/View/CardBasket';
 
 // Оболочки для компонентов представления
@@ -105,7 +105,15 @@ events.on('productCatalog:products', () => {
         const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), () => {
             events.emit('cardCatalog:selected', { id: item.id });
         })
-        return card.render(item)
+         
+        card.image = item.image;
+        card.imageAdd = item.title;
+        card.category = item.category as CategoryKey;
+
+        return card.render({
+            title: item.title, 
+            cost: item.price
+        })
     })       
     galerry.render({ catalog: items })
 })
@@ -121,10 +129,28 @@ events.on<{ id: string }>('cardCatalog:selected', ({ id }) => {
 // Открытие полной карточки товара в модальном окне
 events.on<{ id: string }>('cardCatalog:openCard', ({ id }) => {
     const product = productCatalog.getProductById(id)
-    cardPreview.buttonChange = basketModel.hasItem(id)
+    
+     if (!product) {
+        console.error(`Продукт с id ${id} не найден в каталоге.`);
+        return; 
+    }
+
+    Object.assign(cardPreview, {
+        image: product.image,
+        imageAdd: product.title,
+        category: product.category,
+        description: product.description,
+        buttonChange: basketModel.hasItem(id)
+    });
+
     modal.open()
-    modal.render({ content: cardPreview.render(product) })
-                
+
+    modal.render({ 
+        content: cardPreview.render({
+            title: product.title,
+            cost: product.price
+        }) 
+    })            
 })
 
 // клик по кнопке добавления/удаления в корзину
@@ -147,9 +173,15 @@ events.on('cardPreviewButton:click', () => {
 const getBasketList = (): HTMLElement[] => {
     const basketLists = basketModel.getItems().map((list, index) => {
         const card = new CardBasket(cloneTemplate(cardBasketTemplate), () => {
-            events.emit('basket:delete');
+            events.emit('basket:delete', { id: list.id });
         })
-        return card.render({...list, index: index + 1})
+
+        card.index = index + 1
+
+        return card.render({
+           title: list.title,
+           cost: list.price
+        })
     })
 
     return basketLists
